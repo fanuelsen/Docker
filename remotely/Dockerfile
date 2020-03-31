@@ -12,7 +12,6 @@ RUN \
  wget -q "https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb" && \
  dpkg -i packages-microsoft-prod.deb && \
  apt-get update && \
- #apt-get install -y aspnetcore-runtime-2.2=2.2.0-1 && \
  apt-get install -y \
    software-properties-common \
    apt-transport-https \
@@ -23,8 +22,10 @@ RUN \
    libc6-dev \
    libgdiplus && \
 mkdir -p /var/www/remotely && \
+mkdir -p /var/www/remotely/db && \
 wget -q https://github.com/Jay-Rad/Remotely/releases/latest/download/Remotely_Server_Linux-x64.zip && \
 unzip -o Remotely_Server_Linux-x64.zip -d /var/www/remotely && \
+wget https://raw.githubusercontent.com/fanuelsen/Docker/master/remotely/appsettings.Production.json -P /var/www/remotely/db && \
 setfacl -R -m u:www-data:rwx /var/www/remotely && \
 chown -R www-data:www-data /var/www/remotely
 
