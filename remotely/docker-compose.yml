@@ -1,0 +1,32 @@
+services:
+  app:
+    image: prolle/remotely
+    restart: always
+    volumes:
+      - ./Remotely.db:/var/www/remotely/db/Remotely.db
+      - ./appsettings.Production.json:/var/www/remotely/appsettings.Production.json
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.remotely.entrypoints=http"
+      - "traefik.http.routers.remotely.rule=Host(`remotely.example.com`)"
+      - "traefik.http.middlewares.remotely-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.remotely.middlewares=remotely-https-redirect"
+      - "traefik.http.middlewares.auth-remotely.chain.middlewares=auth-users-remotely,https-only-remotely,known-ips-remotely"
+      - "traefik.http.middlewares.auth-users-remotely.basicauth.users=user:$$apr1$$q8eZFHjF$$Fvmkk//V6Btlaf2i/ju5n/" # user/password
+      - "traefik.http.middlewares.https-only-remotely.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.known-ips-remotely.ipwhitelist.sourceRange=0.0.0.0,127.0.0.1/32"
+      - "traefik.http.routers.remotely-secure.middlewares=auth-remotely"
+      - "traefik.http.routers.remotely-secure.entrypoints=https"
+      - "traefik.http.routers.remotely-secure.rule=Host(`remotely.example.com`)"
+      - "traefik.http.routers.remotely-secure.tls=true"
+      - "traefik.http.routers.remotely-secure.tls.certresolver=http"
+      - "traefik.http.routers.remotely-secure.service=remotely"
+      - "traefik.http.services.remotely.loadbalancer.server.port=5000"
+      - "traefik.docker.network=proxy"
+    container_name: remotely
+
+networks:
+  proxy:
+    external: true

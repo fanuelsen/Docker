@@ -25,7 +25,7 @@ mkdir -p /var/www/remotely && \
 mkdir -p /var/www/remotely/db && \
 wget -q https://github.com/Jay-Rad/Remotely/releases/latest/download/Remotely_Server_Linux-x64.zip && \
 unzip -o Remotely_Server_Linux-x64.zip -d /var/www/remotely && \
-wget https://raw.githubusercontent.com/fanuelsen/Docker/master/remotely/appsettings.Production.json -P /var/www/remotely/db && \
+wget https://raw.githubusercontent.com/fanuelsen/Docker/master/remotely/appsettings.Production.json -P /var/www/remotely && \
 setfacl -R -m u:www-data:rwx /var/www/remotely && \
 chown -R www-data:www-data /var/www/remotely
 
