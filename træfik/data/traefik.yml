@@ -9,13 +9,34 @@ entryPoints:
 
 providers:
   docker:
-    endpoint: "unix:///var/run/docker.sock"
+    endpoint: "tcp://socket-proxy:2375"
+    watch: true
     exposedByDefault: false
 
 certificatesResolvers:
   http:
     acme:
-      email: youremail@example.com
+      email: email@example.org
       storage: acme.json
       httpChallenge:
         entryPoint: http
+
+log:
+  Level: DEBUG
+
+log:
+  filePath: "traefik.log"
+  format: json
+
+accessLog:
+  filePath: "access.log"
+  format: json
+
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+      curvePreferences:
+        - secp521r1
+        - secp384r1
+      sniStrict: true

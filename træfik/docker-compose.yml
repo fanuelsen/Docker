@@ -1,6 +1,8 @@
+version: '3'
+
 services:
   traefik:
-    image: traefik:v2.0
+    image: traefik:latest
     container_name: traefik
     restart: unless-stopped
     security_opt:
@@ -12,23 +14,24 @@ services:
       - 443:443
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./data/traefik.yml:/traefik.yml:ro
       - ./data/acme.json:/acme.json
+      - ./data/traefik.log:/traefik.log
+      - ./data/access.log:/access.log
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.entrypoints=http"
       - "traefik.http.routers.traefik.rule=Host(`traefik.example.org`)"
-      - "traefik.http.middlewares.traefik-auth.basicauth.users=user:$$apr1$$q8eZFHjF$$Fvmkk//V6Btlaf2i/ju5n/"
-      - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
+      - "traefik.http.middlewares.auth.chain.middlewares=https-only,known-ips,auth-users"
+      - "traefik.http.middlewares.auth-users.basicauth.users=user:$$apr1$$q8eZFHjF$$Fvmkk//V6Btlaf2i/ju5n/" # user/password
+      - "traefik.http.middlewares.https-only.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.known-ips.ipwhitelist.sourceRange=0.0.0.0"
       - "traefik.http.routers.traefik-secure.entrypoints=https"
       - "traefik.http.routers.traefik-secure.rule=Host(`traefik.example.org`)"
-      - "traefik.http.routers.traefik-secure.middlewares=traefik-auth"
+      - "traefik.http.routers.traefik-secure.middlewares=auth"
       - "traefik.http.routers.traefik-secure.tls=true"
       - "traefik.http.routers.traefik-secure.tls.certresolver=http"
       - "traefik.http.routers.traefik-secure.service=api@internal"
-
 networks:
-  proxy:
+   proxy:
     external: true
