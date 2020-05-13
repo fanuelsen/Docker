@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  whoami:
+    image: containous/whoami
+    restart: always
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.entrypoints=http"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.example.org`)"
+      - "traefik.http.middlewares.whoami-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.whoami.middlewares=whoami-https-redirect"
+      - "traefik.http.routers.whoami-secure.entrypoints=https"
+      - "traefik.http.routers.whoami-secure.rule=Host(`whoami.example.org`)"
+      - "traefik.http.routers.whoami-secure.tls=true"
+      - "traefik.http.routers.whoami-secure.tls.certresolver=http"
+      - "traefik.http.routers.whoami-secure.service=whoami"
+      - "traefik.http.services.whoami.loadbalancer.server.port=80"
+      - "traefik.docker.network=proxy"
+    container_name: whoami
+networks:
+   proxy:
+    external: true
