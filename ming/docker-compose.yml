@@ -1,0 +1,67 @@
+version: '2'
+services:
+  nodered:
+    networks:
+      - proxy
+    restart: always
+    build: ./nodered
+    volumes:
+      - './nodereddata:/data'
+    container_name: nodered
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nodered.rule=Host(`nodered.example.org`)"
+      - "traefik.http.routers.nodered.entrypoints=websecure"
+      - "traefik.http.routers.nodered.tls=true"
+      - "traefik.http.routers.nodered.tls.certresolver=http"
+      - "traefik.http.routers.nodered.middlewares=security-headers" 
+      - "traefik.http.routers.nodered.tls.options=default"
+      - "traefik.http.services.nodered.loadbalancer.server.port=1880"
+
+  influxdb:
+    networks:
+      - proxy
+    restart: always
+    image: influxdb/influxdb:1.7.8
+    environment:
+      - INFLUXDB_DB=ming_default
+      - 
+    volumes:
+      - './influxdata:/var/lib/influxdb'
+    container_name: influxdb
+
+  grafana:
+    networks:
+      - proxy
+    restart: always
+    image: grafana/grafana
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    volumes:
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+    depends_on:
+      - influxdb
+    container_name: grafana
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.example.org`)"
+      - "traefik.http.routers.grafana.entrypoints=websecure"
+      - "traefik.http.routers.grafana.tls=true"
+      - "traefik.http.routers.grafana.tls.certresolver=http"
+      - "traefik.http.routers.grafana.middlewares=security-headers"
+      - "traefik.http.routers.grafana.tls.options=default"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+ 
+  mosquitto:
+    networks:
+     - proxy
+    restart: always
+    build: ./mosquitto
+#    ports:
+#      - "1883:1883"
+#      - "1884:1884"
+
+networks:
+   proxy:
+    external: true
