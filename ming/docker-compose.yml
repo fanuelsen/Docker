@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
   nodered:
     networks:
@@ -6,15 +6,17 @@ services:
     restart: always
     build: ./nodered
     volumes:
-      - './nodereddata:/data'
+      - './nodered/data:/data'
     container_name: nodered
+    ports:
+      - 1880:1880
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.nodered.rule=Host(`nodered.example.org`)"
       - "traefik.http.routers.nodered.entrypoints=websecure"
       - "traefik.http.routers.nodered.tls=true"
       - "traefik.http.routers.nodered.tls.certresolver=http"
-      - "traefik.http.routers.nodered.middlewares=security-headers" 
+      - "traefik.http.routers.nodered.middlewares=security-headers"
       - "traefik.http.routers.nodered.tls.options=default"
       - "traefik.http.services.nodered.loadbalancer.server.port=1880"
 
@@ -22,12 +24,11 @@ services:
     networks:
       - proxy
     restart: always
-    image: influxdb/influxdb:1.7.8
+    image: influxdb:1.8
     environment:
       - INFLUXDB_DB=ming_default
-      - 
     volumes:
-      - './influxdata:/var/lib/influxdb'
+      - './influxdb:/var/lib/influxdb'
     container_name: influxdb
 
   grafana:
@@ -38,11 +39,15 @@ services:
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+      - GF_INSTALL_PLUGINS=grafana-worldmap-panel
     volumes:
       - ./grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/data:/var/lib/grafana # chown 472 on this dir.
     depends_on:
       - influxdb
     container_name: grafana
+    ports:
+      - 3000:3000
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.grafana.rule=Host(`grafana.example.org`)"
@@ -52,12 +57,13 @@ services:
       - "traefik.http.routers.grafana.middlewares=security-headers"
       - "traefik.http.routers.grafana.tls.options=default"
       - "traefik.http.services.grafana.loadbalancer.server.port=3000"
- 
+
   mosquitto:
     networks:
      - proxy
     restart: always
     build: ./mosquitto
+    container_name: mosquitto
 #    ports:
 #      - "1883:1883"
 #      - "1884:1884"
