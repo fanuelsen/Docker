@@ -1,0 +1,34 @@
+entryPoints:
+  web:
+    address: :80
+  websecure:
+    address: :443
+
+providers:
+  docker: # Enables docker to be a provider from its labels
+    endpoint: "tcp://socket-proxy:2375" # see socket-proxy
+    watch: true
+    exposedByDefault: false # Not expose by default docker containers
+  file: # Reads all files located in /etc/traefik/*
+    watch: true
+    directory: "/etc/traefik/"
+
+certificatesResolvers: # Certs handler/resolver
+  http:
+    acme:
+      email: mail@example.org
+      storage: "/letsencrypt/acme.json"
+      tlsChallenge: true
+
+api: # Enables traefik ui dashboard and api
+  insecure: false
+  dashboard: true
+
+log:
+  level: debug
+  filePath: "traefik.log"
+  format: json
+
+accessLog:
+  filePath: "access.log"
+  format: json

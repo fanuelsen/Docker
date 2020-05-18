@@ -1,37 +1,56 @@
-version: '3'
+version: "3.3"
 
 services:
   traefik:
     image: traefik:latest
-    container_name: traefik
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
+    container_name: "traefik"
     networks:
       - proxy
+    command:
+      - --configFile=/static.yaml # Initial config from static.yml file
+    security_opt:
+      - no-new-privileges:true
     ports:
-      - 80:80
-      - 443:443
+      - "80:80"
+      - "443:443"
     volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./data/traefik.yml:/traefik.yml:ro
-      - ./data/acme.json:/acme.json
-      - ./data/traefik.log:/traefik.log
-      - ./data/access.log:/access.log
+      - "/etc/localtime:/etc/localtime:ro"
+      - "./letsencrypt:/letsencrypt" # Shared file with certs in json file (read and write)
+      - "./traefik/traefik.log:/traefik.log" # Traefik debug log
+      - "./traefik/access.log:/access.log" # Access log
+      - "./traefik/static.yaml:/static.yaml" # Initial static config
+      - "./traefik/dynamic.yaml:/etc/traefik/dynamic.yaml" # Dynamic config (min tls version and sniStrict)
     labels:
+      # Traefik label
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik.entrypoints=http"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.example.org`)"
-      - "traefik.http.middlewares.auth.chain.middlewares=https-only,known-ips,auth-users"
-      - "traefik.http.middlewares.auth-users.basicauth.users=user:$$apr1$$q8eZFHjF$$Fvmkk//V6Btlaf2i/ju5n/" # user/password
-      - "traefik.http.middlewares.https-only.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.known-ips.ipwhitelist.sourceRange=0.0.0.0"
-      - "traefik.http.routers.traefik-secure.entrypoints=https"
-      - "traefik.http.routers.traefik-secure.rule=Host(`traefik.example.org`)"
-      - "traefik.http.routers.traefik-secure.middlewares=auth"
-      - "traefik.http.routers.traefik-secure.tls=true"
-      - "traefik.http.routers.traefik-secure.tls.certresolver=http"
-      - "traefik.http.routers.traefik-secure.service=api@internal"
+
+      # Redirect to https Middleware
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+
+      # Security headers middleware
+      - "traefik.http.middlewares.security-headers.headers.stsSeconds=31536000" # 1 año
+      - "traefik.http.middlewares.security-headers.headers.stsPreload=true"
+      - "traefik.http.middlewares.security-headers.headers.forceSTSHeader=true"
+      - "traefik.http.middlewares.security-headers.headers.stsIncludeSubdomains=true"
+
+      # Rules and middlewares asociation with entrypoints
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)" # Catchs all request
+      - "traefik.http.routers.http-catchall.entrypoints=web" # Http middleware for web (http) entrypoint (see static.yaml file)
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https,security-headers" # Add redirect and security middlewares
+      - "traefik.http.routers.https-catchall.rule=hostregexp(`{host:.+}`)" # Catchs all request
+      - "traefik.http.routers.https-catchall.entrypoints=websecure" # Http middleware for websecure (https) entrypoint (see static.yaml file)
+      - "traefik.http.routers.https-catchall.middlewares=security-headers" # add security middleware
+
+      # Secure Dashboard (http basic auth) just with localhost
+      - traefik.http.routers.traefik.rule=Host(`traefik.localhost`)
+      - traefik.http.routers.traefik.service=api@internal
+      - traefik.http.routers.traefik.middlewares=admin
+      - traefik.http.routers.traefik.entrypoints=web
+
+      # Basic auth for dashboard - user admin password admin
+      # Use [ echo $(htpasswd -nb user password) | sed -e s/\\$/\\$\\$/g ] to generate new password
+      - traefik.http.middlewares.admin.basicauth.users=admin:$$apr1$$SAMaaHjX$$ZCo51QWKtqCOzrfaSZxwc1
+
 networks:
    proxy:
     external: true
