@@ -28,7 +28,7 @@ services:
       - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
 
       # Security headers middleware
-      - "traefik.http.middlewares.security-headers.headers.stsSeconds=31536000" # 1 año
+      - "traefik.http.middlewares.security-headers.headers.stsSeconds=31536000" 
       - "traefik.http.middlewares.security-headers.headers.stsPreload=true"
       - "traefik.http.middlewares.security-headers.headers.forceSTSHeader=true"
       - "traefik.http.middlewares.security-headers.headers.stsIncludeSubdomains=true"
