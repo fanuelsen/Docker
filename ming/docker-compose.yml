@@ -8,8 +8,8 @@ services:
     volumes:
       - './nodered/data:/data'
     container_name: nodered
-    ports:
-      - 1880:1880
+#    ports:
+#      - 1880:1880
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.nodered.rule=Host(`nodered.example.org`)"
@@ -46,8 +46,8 @@ services:
     depends_on:
       - influxdb
     container_name: grafana
-    ports:
-      - 3000:3000
+#    ports:
+#      - 3000:3000
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.grafana.rule=Host(`grafana.example.org`)"
