@@ -1,3 +1,4 @@
+---
 version: '3.3'
 
 services:
@@ -15,14 +16,14 @@ services:
       volumes:
       - ./configuration/chirpstack-application-server:/etc/chirpstack-application-server
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.appserver.rule=Host(`chirpstack.example.org`)"
-      - "traefik.http.routers.appserver.entrypoints=websecure"
-      - "traefik.http.routers.appserver.tls=true"
-      - "traefik.http.routers.appserver.tls.certresolver=http"
-      - "traefik.http.routers.appserver.middlewares=security-headers"
-      - "traefik.http.routers.appserver.tls.options=default"
-      - "traefik.http.services.appserver.loadbalancer.server.port=8080"
+      - traefik.enable=true
+      - traefik.http.routers.appserver.rule=Host(`chirpstack.example.org`)
+      - traefik.http.routers.appserver.entrypoints=websecure
+      - traefik.http.routers.appserver.tls=true
+      - traefik.http.routers.appserver.tls.certresolver=http
+      - traefik.http.routers.appserver.middlewares=security-headers
+      - traefik.http.routers.appserver.tls.options=default
+      - traefik.http.services.appserver.loadbalancer.server.port=8080
 
   chirpstack-gateway-bridge:
     container_name: chirpstack-bridge
