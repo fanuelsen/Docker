@@ -18,7 +18,7 @@ services:
       - traefik.http.routers.thingsboard.tls.certresolver=http
       - traefik.http.routers.thingsboard.middlewares=security-headers
       - traefik.http.routers.thingsboard.tls.options=default
-      - traefik.http.services.thingsboard.loadbalancer.server.port=9090"   
+      - traefik.http.services.thingsboard.loadbalancer.server.port=9090
 networks:
   proxy:
     external: true
