@@ -1,0 +1,24 @@
+---
+version: "3"
+services:
+  app:
+    container_name: thingsboard
+    image: thingsboard/tb-postgres:latest
+    restart: always
+    volumes:
+      - ./mytb-data:/data
+      - ./mytb-logs:/var/logs/thingsboard
+    networks:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.thingsboard.rule=Host(`thingsboard.example.org`)
+      - traefik.http.routers.thingsboard.entrypoints=websecure
+      - traefik.http.routers.thingsboard.tls=true
+      - traefik.http.routers.thingsboard.tls.certresolver=http
+      - traefik.http.routers.thingsboard.middlewares=security-headers
+      - traefik.http.routers.thingsboard.tls.options=default
+      - traefik.http.services.thingsboard.loadbalancer.server.port=9090"   
+networks:
+  proxy:
+    external: true
