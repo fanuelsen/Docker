@@ -40,6 +40,7 @@ services:
       - ./configuration/chirpstack-geolocation-server:/etc/chirpstack-geolocation-server
 
   postgresql:
+    container_name: postgresql
     image: postgres:9.6-alpine
     environment:
       - POSTGRES_PASSWORD=root
@@ -48,6 +49,7 @@ services:
       - ./data/postgresql:/var/lib/postgresql/data
 
   redis:
+    container_name: redis
     image: redis:5-alpine
     volumes:
       - ./data/redis:/data
