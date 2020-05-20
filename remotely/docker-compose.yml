@@ -4,7 +4,6 @@ services:
   app:
     container_name: remotely
     image: prolle/remotely
-
     restart: always
     volumes:
       - ./Remotely.db:/var/www/remotely/db/Remotely.db
@@ -19,7 +18,7 @@ services:
       - traefik.http.routers.remotely.tls.certresolver=http
       - traefik.http.routers.remotely.middlewares=security-headers
       - traefik.http.routers.remotely.tls.options=default
-      - traefik.http.services.remotely.loadbalancer.server.port=5000"   
+      - traefik.http.services.remotely.loadbalancer.server.port=5000
 networks:
   proxy:
     external: true
