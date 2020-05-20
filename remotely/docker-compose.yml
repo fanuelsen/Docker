@@ -2,8 +2,9 @@
 version: '3'
 services:
   app:
-    image: prolle/remotely
     container_name: remotely
+    image: prolle/remotely
+
     restart: always
     volumes:
       - ./Remotely.db:/var/www/remotely/db/Remotely.db
