@@ -68,7 +68,6 @@ services:
       - traefik.tcp.routers.mosquitto.middlewares=security-headers
       - traefik.tcp.routers.mosquitto.tls.options=default
 
-    container_name: whoami
 networks:
    proxy:
     external: true
