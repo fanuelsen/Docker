@@ -13,7 +13,7 @@ services:
     image: chirpstack/chirpstack-application-server:3
     ports:
       - '8080'
-      volumes:
+    volumes:
       - ./configuration/chirpstack-application-server:/etc/chirpstack-application-server
     labels:
       - traefik.enable=true
