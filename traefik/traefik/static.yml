@@ -5,8 +5,6 @@ entryPoints:
     address: :443
   mqtt-secure:
     address: :8883
-  mqtt-websockets:
-    address: :8080
 
 providers:
   docker: # Enables docker to be a provider from its labels
