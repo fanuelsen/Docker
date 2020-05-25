@@ -30,7 +30,7 @@ services:
       - traefik.http.services.appserver.loadbalancer.server.port=8080
 
   chirpstack-gateway-bridge:
-    container_name: chirpstack-bridge
+    container_name: chirpstack-bridge-server
     image: chirpstack/chirpstack-gateway-bridge:3
     networks:
       - proxy
@@ -38,9 +38,14 @@ services:
       - 1700/udp
     volumes:
       - ./configuration/chirpstack-gateway-bridge:/etc/chirpstack-gateway-bridge
+    labels:
+      - traefik.enable=true
+      - traefik.udp.routers.semtech.entrypoints=semtech
+      - traefik.udp.routers.semtech.service=semtech-udp
+      - traefik.udp.services.semtech-udp.loadbalancer.server.port=1700
 
   chirpstack-geolocation-server:
-    container_name: chirpstack-geolocation
+    container_name: chirpstack-geolocation-server
     image: chirpstack/chirpstack-geolocation-server:3
     networks:
       - proxy
@@ -72,17 +77,7 @@ services:
     networks:
       - proxy
     ports:
-      - '1883'  
-    labels:
-      - traefik.enable=true
-      - traefik.tcp.routers.mosquitto.rule=Host(`mosquitto.example.org`)
-      - traefik.tcp.routers.mosquitto.entrypoints=mqtt-secure
-      - traefik.tcp.routers.mosquitto.tls=true
-      - traefik.tcp.routers.mosquitto.tls.certresolver=http
-      - traefik.tcp.routers.mqtt.service=mqtt-internal 
-      - traefik.tcp.services.mqtt-internal.loadbalancer.server.port=1883
-      - traefik.tcp.routers.mosquitto.middlewares=security-headers
-      - traefik.tcp.routers.mosquitto.tls.options=default
+      - '1883'
 
 networks:
    proxy:
