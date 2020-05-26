@@ -3,8 +3,8 @@ entryPoints:
     address: :80
   websecure:
     address: :443
-  mqtt-secure:
-    address: :8883
+  semtech:
+    address: :1700/udp
 
 providers:
   docker: # Enables docker to be a provider from its labels

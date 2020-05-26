@@ -13,6 +13,7 @@ services:
     ports:
       - 80:80
       - 443:443
+      - 1700:1700/udp
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./letsencrypt:/letsencrypt 
