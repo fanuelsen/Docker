@@ -13,8 +13,8 @@
 ### Volumes
 | Lines | Usage | 
 | ---- |----| 
-| ```/etc/localtime:/etc/localtime:ro``` | Sets container time same as host |
-| ```./letsencrypt:/letsencrypt``` | Shared folder with certs in json format (chmod 600 on acme.json) |
+| ```/etc/localtime:/etc/localtime:ro``` | Syncs the container time with the host system |
+| ```./letsencrypt:/letsencrypt``` | Mount directory with certs in json format (chmod 600 on acme.json) |
 | ```./traefik/traefik.log:/traefik.log``` | Traefik debug log |
 | ```./traefik/access.log:/access.log``` | Access log |
 | ```./traefik/static.yaml:/static.yaml``` | Initial static config |

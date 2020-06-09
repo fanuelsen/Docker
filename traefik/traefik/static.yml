@@ -10,7 +10,7 @@ providers:
   docker: # Enables docker to be a provider from its labels
     endpoint: "tcp://socket-proxy:2375" # see socket-proxy
     watch: true
-    exposedByDefault: false # Not expose by default docker containers
+    exposedByDefault: false # disables default exposing containers
   file: # Reads all files located in /etc/traefik/*
     watch: true
     directory: "/etc/traefik/"
