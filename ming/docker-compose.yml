@@ -66,3 +66,5 @@ services:
 networks:
    traefik:
     external: true
+   ming:
+    external: true
