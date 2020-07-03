@@ -6,7 +6,7 @@ services:
     container_name: chirpstack-network
     image: chirpstack/chirpstack-network-server:3
     networks:
-      - proxy
+      - chirpstack
     volumes:
       - ./configuration/chirpstack-network-server:/etc/chirpstack-network-server
 
@@ -14,7 +14,8 @@ services:
     container_name: chirpstack-application-server
     image: chirpstack/chirpstack-application-server:3
     networks:
-      - proxy
+      - traefik
+      - chirpstack
     ports:
       - '8080'
     volumes:
@@ -33,7 +34,8 @@ services:
     container_name: chirpstack-bridge-server
     image: chirpstack/chirpstack-gateway-bridge:3
     networks:
-      - proxy
+      - traefik
+      - chirpstack
     ports:
       - 1700/udp
     volumes:
@@ -48,7 +50,7 @@ services:
     container_name: chirpstack-geolocation-server
     image: chirpstack/chirpstack-geolocation-server:3
     networks:
-      - proxy
+      - chirpstack
     volumes:
       - ./configuration/chirpstack-geolocation-server:/etc/chirpstack-geolocation-server
 
@@ -58,7 +60,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=root
     networks:
-      - proxy
+      - chirpstack
     volumes:
       - ./configuration/postgresql/initdb:/docker-entrypoint-initdb.d
       - ./data/postgresql:/var/lib/postgresql/data
@@ -67,7 +69,7 @@ services:
     container_name: redis
     image: redis:5-alpine
     networks:
-      - proxy
+      - chirpstack
     volumes:
       - ./data/redis:/data
 
@@ -75,10 +77,12 @@ services:
     container_name: mosquitto
     image: eclipse-mosquitto
     networks:
-      - proxy
+      - chirpstack
     ports:
       - '1883'
 
 networks:
-   proxy:
+   traefik:
+    external: true
+   chirpstack:
     external: true
