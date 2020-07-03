@@ -2,7 +2,8 @@ version: '3'
 services:
   nodered:
     networks:
-      - proxy
+      - traefik
+      - ming
     restart: always
     build: ./nodered
     volumes:
@@ -20,7 +21,7 @@ services:
 
   influxdb:
     networks:
-      - proxy
+      - ming
     restart: always
     image: influxdb:1.8
     environment:
@@ -31,7 +32,8 @@ services:
 
   grafana:
     networks:
-      - proxy
+      - traefik
+      - ming
     restart: always
     image: grafana/grafana
     environment:
@@ -56,11 +58,11 @@ services:
 
   mosquitto:
     networks:
-     - proxy
+     - traefik
     restart: always
     build: ./mosquitto
     container_name: mosquitto
 
 networks:
-   proxy:
+   traefik:
     external: true
