@@ -11,6 +11,7 @@ services:
     container_name: nodered
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
       - "traefik.http.routers.nodered.rule=Host(`nodered.example.org`)"
       - "traefik.http.routers.nodered.entrypoints=websecure"
       - "traefik.http.routers.nodered.tls=true"
