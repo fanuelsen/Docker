@@ -5,7 +5,7 @@ services:
     image: traefik:latest
     container_name: traefik
     networks:
-      - proxy
+      - traefik
     command:
       - --configFile=/static.yaml
     security_opt:
@@ -43,5 +43,5 @@ services:
       - traefik.http.middlewares.admin.basicauth.users=admin:$$apr1$$SAMaaHjX$$ZCo51QWKtqCOzrfaSZxwc1
 
 networks:
-   proxy:
+   traefik:
     external: true
