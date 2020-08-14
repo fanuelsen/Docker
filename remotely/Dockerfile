@@ -22,23 +22,18 @@ RUN \
    ffmpeg \
    libc6-dev \
    libgdiplus && \
-rm -rf /var/lib/apt/lists/* && \
 mkdir -p /var/www/remotely && \
-mkdir -p /var/www/remotely/db && \
 wget -q https://github.com/lucent-sea/Remotely/releases/latest/download/Remotely_Server_Linux-x64.zip && \
 unzip -o Remotely_Server_Linux-x64.zip -d /var/www/remotely && \
-rm Remotely_Server_Linux-x64.zip && \
-rm packages-microsoft-prod.deb && \
-rm -rf /var/www/remotely/wwwroot/lib/jquery && \
-rm -rf /var/www/remotely/wwwroot/lib/jquery-validation && \
-rm -rf /var/www/remotely/wwwroot/lib/jquery-validation-unobtrusive && \
+rm -rf /var/www/remotely/wwwroot/lib/jquery \
+  /var/www/remotely/wwwroot/lib/jquery-validation \
+  /var/www/remotely/wwwroot/lib/jquery-validation-unobtrusive \
+  rm Remotely_Server_Linux-x64.zip \
+  rm packages-microsoft-prod.deb \
+  rm -rf /var/lib/apt/lists/* && \
 cp -ar /var/www/remotely/wwwroot/Identity/lib/jquery /var/www/remotely/wwwroot/lib/jquery && \
 cp -ar /var/www/remotely/wwwroot/Identity/lib/jquery-validation /var/www/remotely/wwwroot/lib/jquery-validation && \
 cp -ar /var/www/remotely/wwwroot/Identity/lib/jquery-validation-unobtrusive /var/www/remotely/wwwroot/lib/jquery-validation-unobtrusive &&\
-wget https://code.jquery.com/jquery-3.5.1.min.js -o /var/www/remotely/wwwroot/lib/jquery/dist/jquery-3.5.1.min.js && \
-wget https://code.jquery.com/jquery-3.5.1.js -o /var/www/remotely/wwwroot/lib/jquery/dist/jquery-3.5.1.js && \
-wget https://code.jquery.com/jquery-3.5.1.min.map -o /var/www/remotely/wwwroot/lib/jquery/dist/jquery-3.5.1.min.map && \
-wget https://raw.githubusercontent.com/lucent-sea/Remotely/master/Server/appsettings.json -P /var/www/remotely/appsettings.Production.json && \
 setfacl -R -m u:www-data:rwx /var/www/remotely && \
 chown -R www-data:www-data /var/www/remotely
 
