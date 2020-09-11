@@ -11,8 +11,19 @@ services:
     restart: always
     networks:
         - traefik
+        - gitea
     volumes:
       - 'gitea-data:/data'
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.gitea.rule=Host(`gitea.example.org`)
+      - traefik.http.routers.gitea.entrypoints=websecure
+      - traefik.http.routers.gitea.tls=true
+      - traefik.http.routers.gitea.tls.certresolver=http
+      - traefik.http.routers.gitea.middlewares=security-headers
+      - traefik.http.routers.gitea.tls.options=default
+      - traefik.http.services.gitea.loadbalancer.server.port=3000
+  
 
   drone-server:
     container_name: drone-server
@@ -21,7 +32,7 @@ services:
     depends_on:
         - gitea
     networks:
-        - traefik
+        - gitea
     volumes:
       - 'drone-data:/var/lib/drone'
     environment:
@@ -30,7 +41,7 @@ services:
       - DRONE_GITEA=true
       - DRONE_GITEA_URL=http://gitea:3000
       - DRONE_SECRET=secret
-      - DRONE_NETWORK=gitea_default
+      - DRONE_NETWORK=gitea
 
   drone-agent:
     container_name: drone-agent
@@ -41,8 +52,16 @@ services:
       - drone-server
     networks:
       - traefik
+      - gitea
     volumes:
       - "tcp://socket-proxy:2375"
     environment:
       - DRONE_SERVER=drone-server:9000
       - DRONE_SECRET=secret
+
+volumes:
+  gitea-data:
+
+networks:
+  traefik:
+    external: true
