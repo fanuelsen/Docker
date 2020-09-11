@@ -61,6 +61,7 @@ services:
 
 volumes:
   gitea-data:
+  drone-data:
 
 networks:
   traefik:
