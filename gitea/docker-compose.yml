@@ -1,0 +1,66 @@
+version: "3.6"
+
+services:
+  gitea:
+    container_name: gitea
+    image: gitea/gitea:latest
+    restart: unless-stopped
+    networks:
+      - traefik
+      - gitea
+    volumes:
+      - gitea-data:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - db
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - DB_TYPE=postgres
+      - DB_HOST=db:5432
+      - DB_NAME=gitea
+      - DB_USER=gitea
+      - DB_PASSWD=gitea
+      - PROTOCOL=https
+      - DOMAIN=gitea.example.org
+      - ROOT_URL=https://gitea.example.org/
+      - LOCAL_ROOT_URL=https://gitea.example.org
+      - RUN_MODE=prod
+      - SSH_DOMAIN=gitea.example.org
+      - LFS_START_SERVER=true
+#      - DISABLE_REGISTRATION=true
+      - REQUIRE_SIGNIN_VIEW=true
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.gitea.rule=Host(`gitea.example.org`)
+      - traefik.http.routers.gitea.entrypoints=websecure
+      - traefik.http.routers.gitea.tls=true
+      - traefik.http.routers.gitea.tls.certresolver=http
+      - traefik.http.routers.gitea.middlewares=security-headers
+      - traefik.http.routers.gitea.tls.options=default
+      - traefik.http.services.gitea.loadbalancer.server.port=3000
+  
+
+  db:
+    container_name: gitea-db
+    image: postgres:alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=gitea
+      - POSTGRES_PASSWORD=gitea
+      - POSTGRES_DB=gitea
+    networks:
+      - gitea
+    volumes:
+      - gitea-db:/var/lib/postgresql/data
+
+networks:
+  traefik:
+    external: true
+  gitea:
+    external: false
+
+volumes:
+  gitea-data:
+  gitea-db:
