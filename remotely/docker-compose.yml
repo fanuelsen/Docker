@@ -9,8 +9,8 @@ services:
     ports:
       - 5000:5000
     volumes:
-      - ./Remotely.db:/var/www/remotely/Remotely.db
-      - ./appsettings.Production.json:/var/www/remotely/appsettings.Production.json
+      - ./Remotely.db:/remotely/Remotely.db
+      - ./appsettings.Production.json:/remotely/appsettings.Production.json
     networks:
       - proxy
     labels:
