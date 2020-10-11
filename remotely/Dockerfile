@@ -1,4 +1,5 @@
 FROM alpine:latest AS build-env
+MAINTAINER Per-Ole Fanuelsen
 
 WORKDIR /build
 
@@ -7,8 +8,9 @@ RUN \
     wget -q https://github.com/lucent-sea/Remotely/releases/latest/download/Remotely_Server_Linux-x64.zip && \
     unzip -o Remotely_Server_Linux-x64.zip && \
     rm Remotely_Server_Linux-x64.zip && \
-    rm -r wwwroot/Downloads/*  
-    
+    rm -r wwwroot/Downloads/*
+
+
 RUN chmod u+x,o+x .
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
@@ -20,9 +22,10 @@ RUN adduser \
   --disabled-password \
   --home /$APP_USER \
   --gecos '' $APP_USER && \
-  apt-get update && \
-  apt-get upgrade && \
-  apt-get clean
+  chown $APP_USER:$APP_USER /$APP_DIR && \
+  apt-get update -y && \
+  apt-get upgrade -y && \
+  apt-get clean -y
 
 COPY --from=build-env --chown=$APP_USER:$APP_USER /build .
 
