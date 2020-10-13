@@ -1,5 +1,5 @@
 FROM alpine:latest AS build-env
-MAINTAINER Per-Ole Fanuelsen
+LABEL maintainer="Per-Ole Fanuelsen"
 
 WORKDIR /build
 
