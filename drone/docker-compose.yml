@@ -31,7 +31,7 @@ services:
     container_name: drone-runner
     image: drone/drone-runner-docker
     environment:
-      DRONE_RPC_HOST: drone.intern.i-sone.no
+      DRONE_RPC_HOST: drone.example.org
       DRONE_RPC_PROTO: https
       DRONE_RPC_SECRET: 0ebc1b4be0dc5039da146d304da47f4c
       DRONE_RUNNER_CAPACITY: 1
